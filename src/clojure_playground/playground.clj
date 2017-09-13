@@ -1,3 +1,5 @@
+(ns clojure-playground.playground)
+
 ;; find out what clojure version you have installed.
 ;; If you are less than 1.7, you won't have the update function.
 ;; To update the version of Clojure, make your code run in the context of a Leiningen project,

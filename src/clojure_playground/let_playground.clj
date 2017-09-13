@@ -1,3 +1,5 @@
+(ns clojure-playground.let-playground)
+
 ;; let is a Clojure special form, a fundamental building block of the language.
 ;;
 ;; In addition to parameters passed to functions, let provides a way to create

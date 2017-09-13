@@ -1,4 +1,7 @@
-(ns clojure.repl)
+;; Not sure why this was here? See note in assoc-playground
+; (ns clojure.repl)
+
+(ns clojure-playground.general-language-playground)
 
 ;;
 ; PRINTING STRINGS

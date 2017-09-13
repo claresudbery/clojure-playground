@@ -1,3 +1,5 @@
+(ns clojure-playground.thread-macro-playground)
+
 ;; !! As far as I can work out, this is actually nothing to do with threading, as in multi-threading!
 
 ;; -> operator

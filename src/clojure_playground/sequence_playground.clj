@@ -1,3 +1,5 @@
+(ns clojure-playground.sequence-playground)
+
 ;; There are many functions that interact on sequences.
 ;; For example, doseq, dotimes, for, loop, doall, or dorun.
 

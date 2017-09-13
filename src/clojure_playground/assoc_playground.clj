@@ -1,4 +1,10 @@
-(ns clojure.core)
+;; Not sure why I had this, but what it would actually means
+;; is that everything in this file is being added to the core namespace.
+;; potentially this could mean I was redefining core stuff!
+;; Maybe not such a great iea then...
+; (ns clojure.core)
+
+(ns clojure-playground.assoc-playground)
 
 ; Define a map whose key is not a keyword
 (def m2 {4 9, 3 0})
