@@ -7,7 +7,7 @@
 (ns clojure-playground.assoc-playground)
 
 ; Define a map whose key is not a keyword
-(def m2 {4 9, 3 0})
+(def m2 {4 11, 3 0})
 m2
 
 ; Define a map with three levels of nesting:

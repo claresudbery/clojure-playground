@@ -1,12 +1,18 @@
 ;; Not sure why this was here? See note in assoc-playground
 ; (ns clojure.repl)
 
-(ns clojure-playground.general-language-playground)
+;; require:
+;; require statements go inside namespace declarations.
+;; This is saying that we will include the let-playground code
+;; in this file, and can now qualify that code using "let-stuff"
+;; instead of "let-playground"
+(ns clojure-playground.general-language-playground
+  (:require [clojure-playground.let-playground :as let-stuff]))
 
 ;;
 ; PRINTING STRINGS
 ;;
-(print-str "Aubrey said, \"I think we should go to the Orange Julius.\"")
+(println "Aubrey said, \"I think we should go to the Orange Julius.\"")
 
 ;;
 ; VAR BINDING
@@ -15,14 +21,10 @@
 ; ! Don't use this method in a function! Use let instead (see below)
 ;;
 (def my-number 234)
-(type #'user/my-number)
-; this is the global version?
+; find the type of the thing you just defined
+(type my-number)
+; print out my-number
 my-number
-; user is a namespace?
-; "A namespace will have a new binding from Symbol to Var when the def function is used.
-; Then each Var will have its value."
-; From here: http://clojurebridge.github.io/community-docs/docs/clojure/def/
-user/my-number
 
 ;;
 ; USER DEFINED FUNCTIONS
@@ -31,8 +33,8 @@ user/my-number
 (def ten-times (fn [x] (* 10 x)))
 (ten-times 6)
 ; if you can't remember whether you created a var or not:
-(resolve 'ten-times)
-(resolve 'doesnt-exist)
+(resolve 'ten-times) ;; this will return the fully-qualified name (if defined)
+(resolve 'doesnt-exist) ;; this will return nil
 ;; for more on this, see the examples at http://clojurebridge.github.io/community-docs/docs/clojure/def/
 
 (def feet 5)
