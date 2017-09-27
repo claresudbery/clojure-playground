@@ -31,7 +31,13 @@ m
 (assoc m :f 6)
 
 ; Using assoc on a vector - have to specify the index of the thing being inserted
+; if the index is 1 greater than the existing size, the new value is appended
 (assoc ["clare"] 1 "ally")
+; if the index is more than 1 greater than the existing size, you get an error
+(assoc ["clare"] 2 "ally")
+; if the index is the index of an existing member, that value gets replaced (so the new value is not actually inserted)
+(assoc ["clare" "ally" "oscar"] 2 "felix")
+(assoc ["clare" "ally" "oscar"] 3 "felix")
 
 ; Remove a key
 (dissoc (assoc m :f 6) :f)
@@ -39,6 +45,7 @@ m
 ; Return a new map where the value of 25 has now been changed to 30
 ; The difference between assoc and assoc-in is that assoc supports nesting
 ; Expected result: {:a 3, :b 5, :c {:d {:e 30}}}
+m
 (assoc-in m [:c :d :e] 30)
 
 ; Return a new map – based on the original (which is of course immutable)
@@ -55,7 +62,6 @@ m
 ; This will create some new nesting, because :g is the fourth member, so we now have a fourth level of nesting
 ; Note that a new element - :f - is created, and then :g is nested under :f.
 ; This wouldn't work - (assoc-in m [:c :d :e :f] 30) - because :e is an int, not a map.
-; Result: {:a {:b {:c 25, :d {:e 30}}}}
 m
 (assoc-in m [:c :d :f :g] 30)
 
@@ -91,10 +97,11 @@ m
 (def m {1 {:connections {4 2}}})
 (assoc-in {} [1 :connections 4] 2)
 
-;; can also be used to update a mutable item
+;; assoc-in can also be used to update a mutable item (in conjunction with swap)
 ; See mutability-playground for more info
 (def ppl (atom {"persons" {"joe" {:age 1}}}))
 (swap! ppl assoc-in ["persons" "bob"] {:age 11})
+; the @ symbol is used to dereference the atom
 @ppl
 ;;=> {"persons" {"joe" {:age 1}, "bob" {:age 11}}}
 

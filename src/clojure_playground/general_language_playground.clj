@@ -21,9 +21,11 @@
 ; ! Don't use this method in a function! Use let instead (see below)
 ;;
 (def my-number 234)
-; find the type of the thing you just defined
+;;
+; find the type of the thing you just defined:
 (type my-number)
-; print out my-number
+;;
+; print out my-number:
 my-number
 
 ;;
@@ -32,6 +34,7 @@ my-number
 ;;
 (def ten-times (fn [x] (* 10 x)))
 (ten-times 6)
+;;
 ; if you can't remember whether you created a var or not:
 (resolve 'ten-times) ;; this will return the fully-qualified name (if defined)
 (resolve 'doesnt-exist) ;; this will return nil
@@ -86,6 +89,7 @@ average-height
 ;
 ; count gives us a count of the number of items in a vector.
 (count [5 10 15])
+(count (vector 5 10 15 20))
 ;
 ; nth gives us the nth item in the vector.
 ; Note that we start counting at 0, so in the example, calling nth with the number 1
@@ -98,13 +102,17 @@ average-height
 ; rest returns all except the first item.
 (rest [5 10 15])
 ;
-; vector containing temps for next seven days starting sunday
-(vector [25.2 24.3 21.3 16.5 17.4 18 19])
+; vector containing temperatures for next seven days starting sunday
+(vector 25.2 24.3 21.3 16.5 17.4 18 19)
 ; temp on tuesday
 (nth [25.2 24.3 21.3 16.5 17.4 18 19] 2)
+;;
 ; !! This does NOT create a var containing the vector of temps!
 (def temps (vector [25.2 24.3 21.3 16.5 17.4 18 19]))
 ; It is actually a vector containing a vector
+; The mistake was that as well as using the vector keyword,
+; we also used the square bracket notation
+; - meaning that we actually defined two vectors, one containing the other
 temps
 ; ... so this will work
 (nth temps 0)
@@ -114,10 +122,11 @@ temps
 (def temps [25.2 24.3 21.3 16.5 17.4 18 19])
 (nth temps 2)
 
+
 ;;
 ; MAPS
 ;;
-; maps are basically dictionaries
+; maps are basically dictionaries, or sets of key-value pairs
 {:first "Sally" :last "Brown"}
 ; they can hold mixed data types:
 {:a 1 :b "two"}
@@ -126,16 +135,20 @@ temps
 ; map of a map (ie a dictionary of dictionaries)
 {:trinity {:length 40} :clare {:length 30}}
 ; assoc and dissoc are paired functions: they associate and disassociate items from a map.
+; this will add a new key-value pair to the map defined by {:first "Sally"}:
 (assoc {:first "Sally"} :last "Brown")
+;;
+; This will remove the pair whose key is :last, leaving only onw key-value pair in the map:
 (dissoc {:first "Sally" :last "Brown"} :last)
-; merge merges two maps together to make a new map.
+;
+; merge merges two maps together to make a new map:
 (merge {:first "Sally"} {:last "Brown"})
 ;;
 ; MAP EXTRACTION
 (count {:first "Sally" :last "Brown"})
 ; We can use a keyword like using a function in order to look up values in a map.
 (:first {:first "Sally" :last "Brown"})
-(:clare {:trinity {:length 40} :clare {:length 30}})
+(:clare {:trinity {:length 40} :clare {:length 30 :height 50}})
 ; we can supply a default key to be used when the key we asked for is not in the map.
 ; (you can call it what you like)
 (:last {:first "Sally"} :MISS)
@@ -146,23 +159,39 @@ temps
 (keys {:first "Sally" :last "Brown"})
 (vals {:first "Sally" :last "Brown"})
 ; get-in will get a particular member
-(def st {:trinity {:x -1.7484556000744965E-6, :y 39.99999999999996, :angle 90, :color [106 40 126]}})
+(def st {:trinity {:x -1.7484556000744965E-6, :y 39.99999999999996, :angle 90, :color {:first [106 40 126]}}})
 (get-in st [:trinity :angle])
+(get-in st [:trinity :color])
+; because we have given the value whose key is :color a key called :first, the following two are equivalent:
+(:first (get-in st [:trinity :color]))
+(get-in st [:trinity :color :first])
+; ...but if we actually want the first element in the vector whose key is :first, we use the keyword 'first'
+; (not the same thing as the key we have defined as :first):
+(first (get-in st [:trinity :color :first]))
 ;;
 ; MAP UPDATE
-; update-in is a weird one - it looks weiord until you understand that its arguments are a map, a key or list of keys,
-; and then a function and the arguments to the function.
+; update-in is a weird one - it looks weird until you understand that its arguments are a map,
+; a key or list of keys, and then a function and the arguments to the function.
 ; That function and its arguments will be applied to the value associated with the key(s)
-; In the example below, it helps to understand that str is effectively a string-concat function
+; In the examples below, it helps to understand that str is effectively a string-concat function
 (str "hello, " "world")
+; for this example we are only providing one key, but we still need to enclose it in a vector:
 (def hello {:count 1 :words "hello"})
 (update-in hello [:words] str ", world")
+; for this example we are providing more than one key, but it fails because the keys refer to more than one value:
+(def greetings0 {:count 1 :phrase1 "hello" :phrase2 "goodbye"})
+(update-in greetings0 [:phrase1 :phrase2] str ", world")
+; this example works because the provided keys resolve to just one value
+; (if you want to apply a function to more than one value, use the map function instead - see below):
+(def greetings1 {:count 1 :phrase1 {:phrase2 "goodbye"}})
+(update-in greetings1 [:phrase1 :phrase2] str ", world")
+; for this example the function is just the subtraction operator
 (def mine {:pet {:age 5 :name "able"}})
 (update-in mine [:pet :age] - 3)
 
 ;;
 ; COLLECTIONS OF COLLECTIONS
-; You can vectors of maps, maps of vectors, etc
+; You can have vectors of maps, maps of vectors, etc
 {:trinity {:x -1.7484556000744965E-6, :y 39.99999999999996, :angle 90, :color [106 40 126]}}
 
 ;;
@@ -179,7 +208,7 @@ temps
 (height-in-cm 5 4)
 (height-in-cm 5 6)
 ;;
-; PREDICATE FUNCTIONS
+; PREDICATE FUNCTIONS (ie those that return booleans)
 (= 3 4)
 (>= 5 4)
 
@@ -190,6 +219,8 @@ temps
 ; map function
 ; map takes a collection and a function
 ; and applies the function to all the members of the collection
+; This simple example applies the increment function to all members of the collection:
+(map inc [0 30 60 90])
 ;
 ; This example applies the partial function, using the + function
 ; The partial function takes a function f (which is + in this case)
@@ -200,6 +231,28 @@ temps
 ; with the second argument being (in each case) a member from the collection.
 ; So what it's actually doing is adding 90 to every member of the collection.
 (map (partial + 90) [0 30 60 90])
+; This is similar to the update-in example from above, but this time we want to act on all members:
+; (the hash character is the # function macro - for more on this, see here:
+; https://yobriefca.se/blog/2014/05/19/the-weird-and-wonderful-characters-of-clojure/)
+; (basically we are making an inline function definition - a function whose first argument (denoted by %)
+; will be the value from the vector, and whose second argument will be ", world")
+(def greetings2 ["hello" "goodbye"])
+(map #(str % ", world") greetings2)
+; we can also use fn to create an anonymous function:
+(map (fn [a] (str a ", world")) greetings2)
+; Same again but closer to the original intention - now we use a map instead of a vector,
+; and access all values using the vals function
+(def greetings3 {:phrase1 "hello" :phrase2 "goodbye"})
+(map #(str % ", world" ) (vals greetings3))
+; ... and finally we achieve exactly what we originally wanted to achieve, by specifying a subset of keys:
+(def greetings4 {:count 6 :phrase1 "hello" :phrase2 "goodbye"})
+(map #(str % ", world" ) (vals (select-keys greetings4 [:phrase1 :phrase2])))
+; here is another example using the # function macro, because we want to divide everything by 10,
+; which means we want to specify the 1st argument rather than the 2nd - which is what we get if we use partial:
+(def numbers [10 20 30])
+(map #(/ % 10) numbers)
+; If we use partial, the arguments to the / function are in the wrong order:
+(map (partial / 10) numbers)
 ;
 ; reduce function
 ; reduce is kind of the opposite of map
@@ -211,7 +264,7 @@ temps
 ;
 ; ... but really it does this: reduce takes the first two members of the provided
 ; collection and calls the provided function with those members.
-; Next, it calls the provided function again–this time, using the result of the previous
+; Next, it calls the provided function again – this time, using the result of the previous
 ; function call, along with the next member of the collection.
 ; reduce does this over and over again until it finally reaches the end of the collection.
 ;
@@ -223,8 +276,31 @@ temps
 ; pasing in every member of the collection, so basically we are concatenating
 ; all the strings into one giant string.
 (reduce str ["clare" " likes" " swimming"])
+; here we use the name function, which converts a set of key into strings (see below):
 (reduce str (map name [:clare :likes :swimming]))
+; here we create an anonymous function that concatenates two strings with a space between,
+; and we map the name function across a collection of symbols to create a collection of strings,
+; and finally we use reduce to apply our anonymous function to the collection of strings
 (reduce (fn [a b] (str a " " b)) (map name [:clare :likes :swimming]))
+
+; name function:
+; returns the name of a symbol
+;
+(name :clare)
+; here we have a vector whose first element is a symbol
+(name (first [:clare 10 :owen 11 :james 40]))
+; this causes an error because the second element is not a symbol
+; (this example originally happened because I created a vector by mistake when I was trying to create a map):
+(name (nth [:clare 10 :owen 11 :james 40] 1))
+; this works though, because the third element is a symbol:
+(name (nth [:clare 10 :owen 11 :james 40] 2))
+; this doesn't work, because the first element of this map is a key-value pair, not a symbol:
+(name (first {:clare 10 :owen 11 :james 40}))
+; Instead, we take the first element and ask for its key, which is indeed a symbol:
+(key (first {:clare 10 :owen 11 :james 40}))
+(name (key (first {:clare 10 :owen 11 :james 40})))
+; here we take all the keys from a map, then map the name function across all of them:
+(map name (keys {:clare 10 :owen 11 :james 40}))
 
 ;;
 ; ANONYMOUS FUNCTIONS
@@ -233,6 +309,12 @@ temps
 (fn [s1 s2] (str s1 " " s2))
 ; an anonymous function in situ
 (reduce (fn [a b] (str a ", " b)) ["one" "two" "three"])
+;
+; using the # macro to create an anonymous function:
+#(str % ", elephant")
+; in situ (note that this can only be used with map, not with reduce
+; - because you can only have one argument to this type of anonymous function, and reduce needs 2 arguments):
+(map #(str % ", elephant") ["one" "two" "three"])
 
 ;;
 ; ASSIGNMENT USING LET
@@ -245,19 +327,14 @@ temps
       oranges 5]
   (+ mangoes oranges))
 ; inside a function:
-(defn opposite
-  "Given a collection of turtle names, moves two of them in different directions."
+(defn first-and-last
+  "Given a collection of names, tells you the first and last."
   [names]
   (let [t1 (first names)
         t2 (last names)]
-    (forward t1 40)
-    (backward t2 30)))
-
-(doc +)
-
-var string = print-str("Hello world")
-(print-str "Hello, World!")
-var result = 3 + 4
+    (println  (str "first: " t1)
+              ";" (str "last: " t2))))
+(first-and-last ["Clare" "John" "Edgar" "Susan"])
 
 ;; REQUIRE
 ;; When requiring, need single quote:

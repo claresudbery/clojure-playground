@@ -8,6 +8,12 @@
 (def ppl (atom {"persons" {"joe" {:age 1}}}))
 (swap! ppl assoc-in ["persons" "bob"] {:age 11})
 
+; define an atom containing a map
+(def mymap (atom {:a 1 :b 2}))
+@mymap
+; access the value whose key is :a
+(:a @mymap)
+
 ;;	In Signposts, Atom names have exclamation marks – just a stylistic thing
 ;;	It helps to identify atoms, because if you omit the @ symbol from atoms it simply won’t work, but the error is quite silent
 
@@ -16,7 +22,9 @@
 (def names ["one" "two"])
 (assoc names 1 "ally")
 (def people (atom names))
+@people
 (swap! people assoc 1 "ally")
+@people
 
 ;; using swap with update on an atom (Simple atom manipulation:)
 (swap! a update :a inc)
